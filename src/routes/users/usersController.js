@@ -1,4 +1,4 @@
-const { User } = require('../../model/userModel')
+const { User } = require('../../model/index')
 
 
 const updateUser = async (req, res) => {
@@ -38,7 +38,7 @@ const updateUser = async (req, res) => {
 
     } else {
         res.status(400).json({
-            message: 'Rol or id not present.'
+            message: 'Role or id not present.'
         })
     }
 }

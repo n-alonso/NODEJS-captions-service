@@ -9,6 +9,7 @@ const { connectDB } = require('./db')
 const { authRouter, usersRouter } = require('./routes/index')
 const { userAuth } = require('./routes/auth/authMiddleware')
 const { forceHttps } = require('./routes/auth/authController')
+const { picturesRouter } = require('./routes/pictures/picturesRouter')
 
 
 app.use(helmet())
@@ -20,6 +21,7 @@ connectDB()
 
 app.use('/auth', authRouter)
 app.use('/users', userAuth, usersRouter)
+app.use('/pictures', userAuth, picturesRouter)
 
 
 const server = app.listen(port, () => {
