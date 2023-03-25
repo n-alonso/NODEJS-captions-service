@@ -6,10 +6,8 @@ const helmet = require('helmet')
 const app = express()
 const port = process.env.PORT || 5000
 const { connectDB } = require('./db')
-const { authRouter, usersRouter } = require('./routes/index')
-const { userAuth } = require('./routes/auth/authMiddleware')
-const { forceHttps } = require('./routes/auth/authController')
-const { picturesRouter } = require('./routes/pictures/picturesRouter')
+const { userAuth, forceHttps } = require('./services/index')
+const { authRouter, usersRouter, picturesRouter, captionsRouter } = require('./routes/index')
 
 
 app.use(helmet())
@@ -22,6 +20,7 @@ connectDB()
 app.use('/auth', authRouter)
 app.use('/users', userAuth, usersRouter)
 app.use('/pictures', userAuth, picturesRouter)
+app.use('/captions', userAuth, captionsRouter)
 
 
 const server = app.listen(port, () => {
