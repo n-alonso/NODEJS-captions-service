@@ -7,8 +7,8 @@ const app = express()
 const port = process.env.PORT || 5000
 const { connectDB } = require('./db')
 const { authRouter, usersRouter } = require('./routes/index')
-const { userAuth } = require('./middleware/auth')
-const { forceHttps } = require('./services/auth')
+const { userAuth } = require('./routes/auth/authMiddleware')
+const { forceHttps } = require('./routes/auth/authController')
 
 
 app.use(helmet())

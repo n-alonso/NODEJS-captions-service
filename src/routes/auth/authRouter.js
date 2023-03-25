@@ -1,6 +1,6 @@
 const express = require('express')
 const authRouter = express.Router()
-const { register, login, logOut } = require('../../services/auth')
+const { register, login, logOut } = require('./authController')
 
 authRouter.route('/register').post(register)
 authRouter.route('/login').post(login)

@@ -1,4 +1,4 @@
 module.exports = {
-    ...require('./auth/index'),
-    ...require('./users/index')
+    ...require('./auth/authRouter'),
+    ...require('./users/usersRouter')
 }
