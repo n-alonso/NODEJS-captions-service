@@ -2,5 +2,6 @@ module.exports = {
     ...require('./auth-route/authRouter'),
     ...require('./users-route/usersRouter'),
     ...require('./pictures-route/picturesRouter'),
-    ...require('./captions-route/captionsRouter')
+    ...require('./captions-route/captionsRouter'),
+    ...require('./docs-route/docsRouter')
 }

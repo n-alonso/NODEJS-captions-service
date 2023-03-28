@@ -9,7 +9,10 @@ const register = async (req, res) => {
     const { username, password } = req.body
 
     if (password.length < 6) {
-        return res.status(400).json({ message: 'The password needs to have more than 6 characters.' })
+        return res.status(400).json({ 
+            message: 'Could not create user.',
+            error: 'The password needs to have more than 6 characters.'
+         })
     }
 
     const hash = await bcrypt.hash(password, 10)

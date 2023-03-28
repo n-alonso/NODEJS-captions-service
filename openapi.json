@@ -1,0 +1,911 @@
+{
+  "openapi": "3.0.0",
+  "servers": [
+    {
+      "url": "http://localhost:5000"
+    }
+  ],
+  "info": {
+    "description": "This is a portfolio project showcasing crud endpoints for users, pictures, and captions. Uses JWT cookies for authentication, admin users authorisation, mongo as the database, and is deployed to netlify.",
+    "version": "1.0.0",
+    "title": "Caption Service",
+    "license": {
+      "name": "MIT",
+      "url": "https://choosealicense.com/licenses/mit/"
+    }
+  },
+  "tags": [
+    {
+      "name": "Authentication",
+      "description": "Authentication endpoints."
+    },
+    {
+      "name": "Users",
+      "description": "Get, update, and delete users."
+    },
+    {
+      "name": "Pictures",
+      "description": "Perform CRUD operations with pictures."
+    },
+    {
+      "name": "Captions",
+      "description": "Perform CRUD operations with captions."
+    }
+  ],
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "200": {
+          "description": "User successfully created",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/responses/UserCreatedResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request - The password needs to have more than 6 characters",
+          "content": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/responses/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized - Could not create user",
+          "content": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/responses/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Create a new user account",
+        "tags": [
+          "Authentication"
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/RegisterUser"
+        },
+        "responses": null
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "Log in to an existing user account",
+        "tags": [
+          "Authentication"
+        ],
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/responses/LoginSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Could not login",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/responses/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid credentials or user not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/responses/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "basic_auth": []
+          }
+        ]
+      }
+    },
+    "/auth/logout": {
+      "get": {
+        "summary": "Logout the currently logged-in user",
+        "tags": [
+          "Authentication"
+        ],
+        "responses": {
+          "200": {
+            "description": "Logged out successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/response/LogoutResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "summary": "Fetch all users",
+        "tags": [
+          "Users"
+        ],
+        "responses": {
+          "200": {
+            "description": "Users fetched successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/responses/UsersResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authorized - Could not fetch users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/responses/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "jwt_cookie_user": []
+          },
+          {
+            "jwt_cookie_admin": []
+          }
+        ]
+      }
+    },
+    "/users/:id": {
+      "put": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Update the rol of a user.",
+        "description": "Requires admin permissions. Available options are 'Basic' and 'Admin'.",
+        "operationId": "",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "ID of the user.",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/responses/UserResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "$ref": "#/components/requestBodies/UpdateUser"
+        },
+        "security": [
+          {
+            "jwt_cookie_user": []
+          },
+          {
+            "jwt_cookie_admin": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Delete a user.",
+        "description": "Requires admin permissions.",
+        "operationId": "",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "ID of the user.",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/responses/UserResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "jwt_cookie_user": []
+          },
+          {
+            "jwt_cookie_admin": []
+          }
+        ]
+      }
+    },
+    "/pictures": {
+      "get": {
+        "tags": [
+          "Pictures"
+        ],
+        "summary": "Get all pictures.",
+        "description": "",
+        "operationId": "",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/responses/PicturesResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "jwt_cookie_user": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Pictures"
+        ],
+        "summary": "Create a picture.",
+        "description": "",
+        "operationId": "",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/PictureBody"
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/responses/PictureResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Could not create picture",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/responses/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "jwt_cookie_user": []
+          }
+        ]
+      }
+    },
+    "/pictures/:id": {
+      "get": {
+        "tags": [
+          "Pictures"
+        ],
+        "summary": "Get a specific picture by it's id.",
+        "description": "",
+        "operationId": "",
+        "parameters": [
+          {
+            "name": "pictureId",
+            "in": "path",
+            "description": "ID of the picture.",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/responses/PictureResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "jwt_cookie_user": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Pictures"
+        ],
+        "summary": "Update a specific picture by it's id.",
+        "description": "",
+        "operationId": "",
+        "parameters": [
+          {
+            "name": "pictureId",
+            "in": "path",
+            "description": "ID of the picture.",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/responses/PictureResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "$ref": "#/components/requestBodies/PictureBody"
+        },
+        "security": [
+          {
+            "jwt_cookie_user": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Pictures"
+        ],
+        "summary": "Delete a specific picture by it's id.",
+        "description": "",
+        "operationId": "",
+        "parameters": [
+          {
+            "name": "pictureId",
+            "in": "path",
+            "description": "ID of the picture.",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/responses/PictureResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "jwt_cookie_user": []
+          }
+        ]
+      }
+    },
+    "/captions": {
+      "get": {
+        "tags": [
+          "Captions"
+        ],
+        "summary": "Get all captions.",
+        "description": "",
+        "operationId": "",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/responses/CaptionsResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "jwt_cookie_user": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Captions"
+        ],
+        "summary": "Create a caption.",
+        "description": "",
+        "operationId": "",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/responses/CaptionResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "$ref": "#/components/requestBodies/CaptionBody"
+        },
+        "security": [
+          {
+            "jwt_cookie_user": []
+          }
+        ]
+      }
+    },
+    "/captions/:id": {
+      "get": {
+        "tags": [
+          "Captions"
+        ],
+        "summary": "Get a specific caption by id.",
+        "description": "",
+        "operationId": "",
+        "parameters": [
+          {
+            "name": "captionId",
+            "in": "path",
+            "description": "ID of the caption.",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/responses/CaptionResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "jwt_cookie_user": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Captions"
+        ],
+        "summary": "Update a specific caption by id.",
+        "description": "",
+        "operationId": "",
+        "parameters": [
+          {
+            "name": "captionId",
+            "in": "path",
+            "description": "ID of the caption.",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/responses/CaptionResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "$ref": "#/components/requestBodies/CaptionBody"
+        },
+        "security": [
+          {
+            "jwt_cookie_user": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Captions"
+        ],
+        "summary": "Delete purchase order by ID",
+        "description": "For valid response try integer IDs with value < 1000. Anything above 1000 or nonintegers will generate API errors",
+        "operationId": "deleteOrder",
+        "parameters": [
+          {
+            "name": "captionId",
+            "in": "path",
+            "description": "ID of the caption.",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/responses/CaptionResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "jwt_cookie_user": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "basic_auth": {
+        "type": "http",
+        "scheme": "basic",
+        "description": "Basic Authentication (username and password)"
+      },
+      "jwt_cookie_user": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "jwt",
+        "description": "JWT token for user authentication"
+      },
+      "jwt_cookie_admin": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "jwt",
+        "description": "JWT token for admin authentication"
+      }
+    },
+    "schemas": {
+      "Caption": {
+        "type": "object",
+        "properties": {
+          "caption": {
+            "type": "string",
+            "description": "The caption text",
+            "uniqueItems": true
+          },
+          "pictureId": {
+            "type": "string",
+            "description": "The ID of the associated picture",
+            "format": "ObjectId"
+          },
+          "userId": {
+            "type": "string",
+            "description": "The ID of the associated user",
+            "format": "ObjectId"
+          }
+        },
+        "required": [
+          "caption",
+          "pictureId",
+          "userId"
+        ]
+      },
+      "Picture": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "The URL of the picture",
+            "uniqueItems": true
+          },
+          "description": {
+            "type": "string",
+            "description": "The description of the picture"
+          },
+          "captionIds": {
+            "type": "array",
+            "description": "A list of IDs of associated captions",
+            "items": {
+              "type": "string",
+              "format": "ObjectId"
+            }
+          }
+        },
+        "required": [
+          "url",
+          "description",
+          "captionIds"
+        ]
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "description": "The username of the user",
+            "uniqueItems": true
+          },
+          "password": {
+            "type": "string",
+            "description": "The password of the user",
+            "minLength": 6
+          },
+          "role": {
+            "type": "string",
+            "description": "The role of the user, either 'Basic' or 'Admin'",
+            "default": "Basic",
+            "enum": [
+              "Basic",
+              "Admin"
+            ]
+          },
+          "captionIds": {
+            "type": "array",
+            "description": "A list of IDs of associated captions",
+            "items": {
+              "type": "string",
+              "format": "ObjectId"
+            }
+          }
+        },
+        "required": [
+          "username",
+          "password",
+          "role",
+          "captionIds"
+        ]
+      }
+    },
+    "responses": {
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Error message for user registration"
+          },
+          "error": {
+            "type": "string",
+            "description": "A detailed error message"
+          }
+        }
+      },
+      "UserCreatedResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Success message for user registration"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          }
+        }
+      },
+      "LoginSuccessResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          }
+        }
+      },
+      "LogoutResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "UsersResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "users": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/User"
+            }
+          }
+        }
+      },
+      "UserResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          }
+        }
+      },
+      "PicturesResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "pictures": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Picture"
+            }
+          }
+        }
+      },
+      "PictureResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "picture": {
+            "$ref": "#/components/schemas/Picture"
+          }
+        }
+      },
+      "CaptionsResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "pictures": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Caption"
+            }
+          }
+        }
+      },
+      "CaptionResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "picture": {
+            "$ref": "#/components/schemas/Caption"
+          }
+        }
+      }
+    },
+    "requestBodies": {
+      "RegisterUser": {
+        "description": "Request body for registering a new user",
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "type": "string",
+                  "description": "The username of the user"
+                },
+                "password": {
+                  "type": "string",
+                  "description": "The password of the user",
+                  "minLength": 6
+                }
+              },
+              "required": [
+                "username",
+                "password"
+              ]
+            }
+          }
+        }
+      },
+      "UpdateUser": {
+        "description": "Request body for updating the role of a user",
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "role": {
+                  "type": "string",
+                  "description": "The role of the user"
+                }
+              },
+              "required": [
+                "role"
+              ]
+            }
+          }
+        }
+      },
+      "PictureBody": {
+        "description": "Request body for picture",
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "$ref": "#/components/schemas/Picture/properties/url"
+                },
+                "description": {
+                  "$ref": "#/components/schemas/Picture/properties/description"
+                }
+              }
+            }
+          }
+        }
+      },
+      "CaptionBody": {
+        "description": "Request body for creating a caption",
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "caption": {
+                  "$ref": "#/components/schemas/Caption/properties/caption"
+                },
+                "pictureId": {
+                  "$ref": "#/components/schemas/Caption/properties/pictureId"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
