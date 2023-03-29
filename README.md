@@ -2,7 +2,7 @@
 
 Captions Service is a portfolio project showcasing a Node.js + Express API using MongoDB. It includes tooling like ESLint, .env files, and Nodemon.  
 The API features security measures such as Helmet package, basic auth on the login endpoint, JWT cookies on other endpoints, and bcrypt for password processing.  
-The user endpoints require admin access. 
+The user endpoints require admin permissions. 
 
 ## Features
 
@@ -49,6 +49,14 @@ After logging in, they can use the pictures and captions endpoints to add pictur
 Further information on how to use the API can be explored in the Swagger UI and OpenApi files:
 - /docs
 - /openapi.json
+
+## Future Improvements
+
+Some improvements that I want to implement to this project in the future are:
+- Testing with Jest
+- Cache service with node-cache
+- Serverless deployment with Firebase Functions
+- Typescript
 
 ## Credits
 
